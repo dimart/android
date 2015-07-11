@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FAFAFA"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
@@ -51,7 +51,8 @@
         android:text="@string/xyzReader" />
 
     <Button
-        style="@style/AppButton"
+        style="@style/CapstoneButton"
+        android:textColor="@color/black"
         android:onClick="showMessage"
         android:text="@string/capstoneApp"
         android:layout_marginBottom="50dp"/>

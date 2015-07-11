@@ -6,7 +6,7 @@
         <item name="colorPrimary">#009688</item>
         <item name="colorPrimaryDark">#00796B</item>
         <item name="colorControlHighlight">#00796B</item>
-        <item name="android:colorButtonNormal">#009688</item>
+        <item name="colorButtonNormal">#009688</item>
     </style>
 
     <style name="AppButton">
@@ -19,6 +19,10 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textColor">#FAFAFA</item>
+    </style>
+
+    <style name="CapstoneButton" parent="AppButton">
+        <item name="android:background">@drawable/capstone_button</item>
     </style>
 
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="background">#FAFAFA</color>
+    <color name="capstone">#1DE9B6</color>
+    <color name="ripple_capstone">#00BFA5</color>
+</resources>
