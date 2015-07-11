@@ -1,59 +1,66 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background"
+    android:fillViewport="true"
     tools:context=".MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:elevation="4dp" />
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/title"
-        android:textSize="28sp"
-        android:textColor="?attr/colorPrimary"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <Button
-        style="@style/AppButton"
-        android:onClick="showMessage"
-        android:text="@string/popMovies" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/title"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="28sp" />
 
-    <Button
-        style="@style/AppButton"
-        android:onClick="showMessage"
-        android:text="@string/scoresApp" />
+        <Button
+            style="@style/AppButton"
+            android:onClick="showMessage"
+            android:text="@string/popMovies" />
 
-    <Button
-        style="@style/AppButton"
-        android:onClick="showMessage"
-        android:text="@string/libraryApp" />
+        <Button
+            style="@style/AppButton"
+            android:onClick="showMessage"
+            android:text="@string/scoresApp" />
 
-    <Button
-        style="@style/AppButton"
-        android:onClick="showMessage"
-        android:text="@string/buildItBigger" />
+        <Button
+            style="@style/AppButton"
+            android:onClick="showMessage"
+            android:text="@string/libraryApp" />
 
-    <Button
-        style="@style/AppButton"
-        android:onClick="showMessage"
-        android:text="@string/xyzReader" />
+        <Button
+            style="@style/AppButton"
+            android:onClick="showMessage"
+            android:text="@string/buildItBigger" />
 
-    <Button
-        style="@style/CapstoneButton"
-        android:textColor="@color/black"
-        android:onClick="showMessage"
-        android:text="@string/capstoneApp"
-        android:layout_marginBottom="50dp"/>
-</LinearLayout>
+        <Button
+            style="@style/AppButton"
+            android:onClick="showMessage"
+            android:text="@string/xyzReader" />
+
+        <Button
+            style="@style/CapstoneButton"
+            android:layout_marginBottom="50dp"
+            android:onClick="showMessage"
+            android:text="@string/capstoneApp"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+</ScrollView>
