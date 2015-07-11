@@ -12,23 +12,23 @@
         android:background="@color/background">
 
         <android.support.v7.widget.Toolbar
+            android:elevation="4dp"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
-            android:elevation="4dp"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
         <TextView
+            android:text="@string/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/title"
+            android:layout_marginBottom="@dimen/title_margin"
+            android:layout_marginTop="@dimen/title_margin"
             android:textColor="?attr/colorPrimary"
-            android:textSize="28sp" />
+            android:textSize="@dimen/title_text_size" />
 
         <Button
             style="@style/AppButton"
@@ -57,7 +57,7 @@
 
         <Button
             style="@style/CapstoneButton"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="@dimen/bottom_button_margin"
             android:onClick="showMessage"
             android:text="@string/capstoneApp"
             android:textColor="@color/black" />
