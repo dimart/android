@@ -90,6 +90,14 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * AsyncTask is tied to the activity we start it in.
+     * When the activity is destroyed (which happens whenever the phone is rotated),
+     * the AsyncTask we started will refer to the destroyed activity
+     * and not the newly created activity.
+     * This is one of the reasons why using AsyncTask for a longer running task is dangerous.
+     * TODO: Replace AsyncTask with something more activity-independent.
+     */
     private class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
