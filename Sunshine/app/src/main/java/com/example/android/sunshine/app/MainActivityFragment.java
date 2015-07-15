@@ -118,12 +118,27 @@ public class MainActivityFragment extends Fragment {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
+        private double celsiusToFahrenheit(double x) {
+            return (x * 1.8) + 32;
+        }
+
         private String getReadableDateString(long time) {
             return new SimpleDateFormat("EEE MMM dd").format(time);
         }
 
         private String formatHighLows(double high, double low) {
-            return Math.round(high) + "/" + Math.round(low);
+            String units = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity())
+                    .getString(getString(R.string.pref_units_key),
+                            getString(R.string.pref_units_metric));
+
+            if (units != null && units.equals(getString(R.string.pref_units_imperial))) {
+                return Math.round(celsiusToFahrenheit(high))
+                        + "/"
+                        + Math.round(celsiusToFahrenheit(low));
+            } else {
+                return Math.round(high) + "/" + Math.round(low);
+            }
         }
 
         private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
