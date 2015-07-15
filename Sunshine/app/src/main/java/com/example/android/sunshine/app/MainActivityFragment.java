@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -29,8 +30,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -58,7 +57,7 @@ public class MainActivityFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            new FetchWeatherTask().execute("Petergof");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -69,13 +68,6 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] forecastArray = {
-                "Today - Rainy - 50/40",
-                "Tomorrow - Sunny - 80/67"
-        };
-
-        List<String> weekForecast = new ArrayList<>(Arrays.asList(forecastArray));
-
         mForecastAdapter = new ArrayAdapter<>(
                 // The current context (this fragment's parent activity)
                 getActivity(),
@@ -84,7 +76,7 @@ public class MainActivityFragment extends Fragment {
                 // ID of the textView to populate
                 R.id.list_item_forecast_textview,
                 // Forecast data
-                weekForecast);
+                new ArrayList<String>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
@@ -99,6 +91,19 @@ public class MainActivityFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    private void updateWeather() {
+        new FetchWeatherTask().execute(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_location_key),
+                        getString(R.string.pref_location_default)));
     }
 
     /**
