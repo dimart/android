@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def THE_MOVIE_DB_KEY = '"' + TheMovieDBKey + '"' ?: '"Define TheMovieDB API key"';
+
+android.buildTypes.each { type ->
+    type.buildConfigField 'String', 'THE_MOVIE_DB_KEY', THE_MOVIE_DB_KEY
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
