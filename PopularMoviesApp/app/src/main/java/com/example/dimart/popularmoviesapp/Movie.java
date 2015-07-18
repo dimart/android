@@ -1,7 +1,7 @@
 package com.example.dimart.popularmoviesapp;
 
-import android.net.Uri;
-
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -12,16 +12,16 @@ public class Movie {
     private final String mTitle;
     private final String mOverview;
     private final float mRating;
-    private final Date mReleaseDate;
-    private final Uri mPosterUri;
+    private final String mReleaseDate;
+    private final String mPosterUrl;
 
     public static class Builder {
         private final String mTitle;
         private final String mOverview;
 
         private float mRating = -1;
-        private Date mReleaseDate = null;
-        private Uri mPosterUri = Uri.EMPTY;
+        private String mReleaseDate = null;
+        private String mPosterUrl = null;
 
         public Builder(String title, String overview) {
             mTitle = title;
@@ -33,13 +33,13 @@ public class Movie {
             return this;
         }
 
-        public Builder releaseDate(Date x) {
-            mReleaseDate = x;
+        public Builder releaseDate(Date date) {
+            mReleaseDate = new SimpleDateFormat("MMM, d yyyy").format(date);
             return this;
         }
 
-        public Builder posterUri(Uri x) {
-            mPosterUri = x;
+        public Builder posterUrl(URL url) {
+            mPosterUrl = url.toString();
             return this;
         }
 
@@ -53,7 +53,7 @@ public class Movie {
         mOverview = builder.mOverview;
         mRating = builder.mRating;
         mReleaseDate = builder.mReleaseDate;
-        mPosterUri = builder.mPosterUri;
+        mPosterUrl = builder.mPosterUrl;
     }
 
     public String getTitle() {
@@ -68,11 +68,11 @@ public class Movie {
         return mRating;
     }
 
-    public Date getReleaseDate() {
+    public String getReleaseDate() {
         return mReleaseDate;
     }
 
-    public Uri getPosterUri() {
-        return mPosterUri;
+    public String getPosterUrl() {
+        return mPosterUrl;
     }
 }
