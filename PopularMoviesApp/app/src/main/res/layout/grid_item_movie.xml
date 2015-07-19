@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/grid_item_poster"
-        android:layout_width="185dp"
-        android:layout_height="270dp"
+        android:layout_width="@dimen/poster_width"
+        android:layout_height="@dimen/poster_height"
         android:src="@drawable/abc_ratingbar_full_material" />
+
+    <LinearLayout
+        android:id="@+id/grid_item_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/grid_item_poster"
+        android:background="#70000000"
+        android:padding="6dp">
+
+        <TextView
+            android:text="Movie Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:id="@+id/grid_item_title"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
 </RelativeLayout>
