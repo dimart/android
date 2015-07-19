@@ -1,6 +1,7 @@
 package com.example.dimart.popularmoviesapp;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,14 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -25,6 +33,7 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private MovieAdapter mMoviesAdapter;
 
     public MainActivityFragment() {
     }
@@ -34,33 +43,9 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        Movie[] movies = {
-                new Movie.Builder("12 Angry Men", "Overview")
-                        .rating(8.1f)
-                        .releaseDate(toDate("1957-04-10"))
-                        .posterUrl(getPosterUrlFor("qcL1YfkCxfhsdO6sDDJ0PpzMF9n.jpg"))
-                        .build(),
-                new Movie.Builder("Partly Cloudy", "Overview")
-                        .rating(8.0f)
-                        .releaseDate(toDate("2009-05-28"))
-                        .posterUrl(getPosterUrlFor("5M5bg79OV96Vb4O0fDjX5clxASG.jpg"))
-                        .build(),
-                new Movie.Builder("One Flew Over the Cuckoo's Nest", "Overview")
-                        .rating(7.8f)
-                        .releaseDate(toDate("1975-11-18"))
-                        .posterUrl(getPosterUrlFor("2Sns5oMb356JNdBHgBETjIpRYy9.jpg"))
-                        .build(),
-                new Movie.Builder("Solaris", "Overview")
-                        .rating(7.7f)
-                        .releaseDate(toDate("1972-03-20"))
-                        .posterUrl(getPosterUrlFor("pjarQzkcXDmNKi75m2FhXexvR6m.jpg"))
-                        .build()
-        };
-
-        List<Movie> moviesList = new ArrayList<>(Arrays.asList(movies));
-        MovieAdapter moviesAdapter = new MovieAdapter(getActivity(), moviesList);
+        mMoviesAdapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
         GridView moviesGrid = (GridView) rootView.findViewById(R.id.movies_gridview);
-        moviesGrid.setAdapter(moviesAdapter);
+        moviesGrid.setAdapter(mMoviesAdapter);
 
         return rootView;
     }
@@ -73,7 +58,7 @@ public class MainActivityFragment extends Fragment {
             Uri posterUri = Uri.parse(IMG_TMDB_BASE_URL).buildUpon()
                     .appendPath(IMG_SIZE)
                     .appendQueryParameter("api_key", BuildConfig.THE_MOVIE_DB_KEY)
-                    .appendPath(posterId)
+                    .appendPath(posterId.substring(1))
                     .build();
             return new URL(posterUri.toString());
         } catch (MalformedURLException e) {
@@ -89,5 +74,125 @@ public class MainActivityFragment extends Fragment {
             Log.e(LOG_TAG, "Error ", e);
         }
         return null;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovies();
+    }
+
+    private void updateMovies() {
+        new FetchMoviesTask().execute("popular");
+    }
+
+    private class FetchMoviesTask extends AsyncTask<String, Void, Movie[]> {
+        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
+
+        private Movie[] getMovieDataFromJson(String moviesJsonStr)
+                throws JSONException {
+            final String TMDB_LIST = "results";
+            final String TMDB_TITLE = "title";
+            final String TMDB_OVERVIEW = "overview";
+            final String TMDB_DATE = "release_date";
+            final String TMDB_POSTER = "poster_path";
+            final String TMDB_VOTE = "vote_average";
+
+            JSONObject moviesJson = new JSONObject(moviesJsonStr);
+            JSONArray moviesArray = moviesJson.getJSONArray(TMDB_LIST);
+
+            Movie[] movies = new Movie[moviesArray.length()];
+
+            for (int i = 0; i < moviesArray.length(); i++) {
+                JSONObject movieData = moviesArray.getJSONObject(i);
+
+                movies[i] = new Movie.Builder(movieData.getString(TMDB_TITLE),
+                        movieData.getString(TMDB_OVERVIEW))
+                        .releaseDate(toDate(movieData.getString(TMDB_DATE)))
+                        .posterUrl(getPosterUrlFor(movieData.getString(TMDB_POSTER)))
+                        .rating(((float) movieData.getDouble(TMDB_VOTE)))
+                        .build();
+            }
+
+            return movies;
+        }
+
+        @Override
+        protected Movie[] doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String moviesJsonStr = null;
+
+            try {
+                final String TMDB_BASE_URL =
+                        "http://api.themoviedb.org/3/movie/";
+                final String QUERY_TYPE = params[0]; // popular or top_rated
+                Uri builtUri = Uri.parse(TMDB_BASE_URL).buildUpon()
+                        .appendPath(QUERY_TYPE)
+                        .appendQueryParameter("api_key", BuildConfig.THE_MOVIE_DB_KEY)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline won't affect parsing
+                    // But it does make debugging a *lot* easier.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    return null; // No point in parsing.
+                }
+
+                moviesJsonStr = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getMovieDataFromJson(moviesJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Movie[] movies) {
+            if (movies != null) {
+                mMoviesAdapter.clear();
+                mMoviesAdapter.addAll(movies);
+            }
+        }
     }
 }
