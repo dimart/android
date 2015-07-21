@@ -3,6 +3,7 @@ package com.example.dimart.popularmoviesapp;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +49,10 @@ public class MainActivityFragment extends Fragment {
     }
 
     private URL getPosterUrlFor(String posterId) {
+        if (posterId == null) {
+            return null;
+        }
+
         final String IMG_TMDB_BASE_URL = "http://image.tmdb.org/t/p/";
         final String IMG_SIZE = "w185";
 
@@ -80,8 +85,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     public interface TMDBService {
-        @GET("/3/movie/{mode}")
-        TMDBResponse movies(@Path("mode") String mode, @Query("api_key") String apiKey);
+        @GET("/3/movie/{sort_order}")
+        TMDBResponse movies(@Path("sort_order") String sortOrder, @Query("api_key") String apiKey);
     }
 
     private class TMDBResponse {
@@ -97,7 +102,11 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void updateMovies() {
-        new FetchMoviesTask().execute("popular");
+        String sort_order = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_sort_order_key),
+                        getString(R.string.pref_sort_order_most_popular));
+        new FetchMoviesTask().execute(sort_order);
     }
 
     private class FetchMoviesTask extends AsyncTask<String, Void, Movie[]> {
@@ -105,13 +114,17 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected Movie[] doInBackground(String... params) {
+            if (params.length == 0) {
+                return null;
+            }
 
+            String sortOrder = params[0];
             RestAdapter restAdapter = new RestAdapter.Builder()
                     .setEndpoint("http://api.themoviedb.org")
                     .build();
             TMDBService service = restAdapter.create(TMDBService.class);
 
-            List<TMDBResponse.Movie> response = service.movies(params[0], BuildConfig.THE_MOVIE_DB_KEY).results;
+            List<TMDBResponse.Movie> response = service.movies(sortOrder, BuildConfig.THE_MOVIE_DB_KEY).results;
             List<Movie> movies = new ArrayList<>();
             for (TMDBResponse.Movie x : response) {
                 movies.add(new Movie.Builder(x.title, x.overview)

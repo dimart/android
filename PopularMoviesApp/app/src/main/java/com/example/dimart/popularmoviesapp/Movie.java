@@ -39,7 +39,8 @@ public class Movie {
         }
 
         public Builder posterUrl(URL url) {
-            mPosterUrl = url.toString();
+            if (url != null)
+                mPosterUrl = url.toString();
             return this;
         }
 
