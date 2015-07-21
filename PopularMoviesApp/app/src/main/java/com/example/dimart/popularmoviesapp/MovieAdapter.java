@@ -24,7 +24,6 @@ import java.util.List;
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
     private final String LOG_TAG = MovieAdapter.class.getSimpleName();
-    private static MovieHolder holder;
 
     public MovieAdapter(Context context, List<Movie> movies) {
         super(context, 0, movies);
@@ -32,16 +31,18 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        MovieHolder holder;
+
         if(convertView == null)
         {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.grid_item_movie, parent, false);
 
+            // Configure view holder.
             holder = new MovieHolder();
             holder.posterView = (ImageView) convertView.findViewById(R.id.grid_item_poster);
             holder.title = (TextView) convertView.findViewById(R.id.grid_item_title);
             holder.bar = (LinearLayout) convertView.findViewById(R.id.grid_item_bar);
-
             convertView.setTag(holder);
         } else {
             holder = (MovieHolder) convertView.getTag();
@@ -49,7 +50,8 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         Movie movie = getItem(position);
 
-        Picasso.with(getContext()).setLoggingEnabled(true);
+        holder.posterView.setImageDrawable(null);
+
         Picasso.with(getContext())
                 .load(movie.getPosterUrl())
                 .into(holder.target);
