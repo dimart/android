@@ -33,8 +33,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieHolder holder;
 
-        if(convertView == null)
-        {
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.grid_item_movie, parent, false);
 
@@ -61,27 +60,25 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         return convertView;
     }
 
-    static class MovieHolder
-    {
+    static class MovieHolder {
         ImageView posterView;
         TextView title;
         LinearLayout bar;
 
         Palette.PaletteAsyncListener listener = new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette palette) {
-                bar.setBackgroundColor(palette.getVibrantColor(Color.BLACK));
-//                if (isTooLight(palette.getDarkVibrantSwatch().getHsl())) {
-//                    title.setTextColor(Color.argb(130, 0, 0, 0));
-//                } else {
-//                    title.setTextColor(Color.argb(210, 255, 255, 255));
-//                }
+                int color = palette.getVibrantColor(R.color.grid_item_bar);
+                int red = (color >> 16) & 0xFF;
+                int green = (color >> 8) & 0xFF;
+                int blue = color & 0xFF;
+                int alpha = 200;
+                bar.setBackgroundColor(Color.argb(alpha, red, green, blue));
             }
         };
 
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                posterView.setImageDrawable(null);
                 posterView.setImageBitmap(bitmap);
                 Palette.generateAsync(bitmap, listener);
             }

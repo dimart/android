@@ -6,15 +6,14 @@
     <ImageView
         android:id="@+id/grid_item_poster"
         android:layout_width="@dimen/poster_width"
-        android:layout_height="@dimen/poster_height"
-        android:src="@drawable/abc_ratingbar_full_material" />
+        android:layout_height="@dimen/poster_height" />
 
     <LinearLayout
         android:id="@+id/grid_item_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/grid_item_poster"
-        android:background="#70000000"
+        android:background="@color/grid_item_bar"
         android:padding="6dp">
 
         <TextView
@@ -24,7 +23,8 @@
             android:singleLine="true"
             android:id="@+id/grid_item_title"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="@color/light_text"/>
     </LinearLayout>
 
 </RelativeLayout>
