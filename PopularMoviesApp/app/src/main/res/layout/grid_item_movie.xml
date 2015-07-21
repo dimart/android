@@ -5,8 +5,11 @@
 
     <ImageView
         android:id="@+id/grid_item_poster"
-        android:layout_width="@dimen/poster_width"
-        android:layout_height="@dimen/poster_height" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minWidth="@dimen/poster_minWidth"
+        android:minHeight="@dimen/poster_minHeight"
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
         android:id="@+id/grid_item_bar"
