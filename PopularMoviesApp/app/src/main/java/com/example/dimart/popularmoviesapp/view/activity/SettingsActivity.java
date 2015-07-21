@@ -1,10 +1,12 @@
-package com.example.dimart.popularmoviesapp;
+package com.example.dimart.popularmoviesapp.view.activity;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import com.example.dimart.popularmoviesapp.R;
 
 /**
  * Created by Dmitrii Petukhov on 7/21/15.

@@ -1,4 +1,4 @@
-package com.example.dimart.popularmoviesapp;
+package com.example.dimart.popularmoviesapp.model;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;

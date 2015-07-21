@@ -1,4 +1,4 @@
-package com.example.dimart.popularmoviesapp;
+package com.example.dimart.popularmoviesapp.presenter.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.dimart.popularmoviesapp.R;
+import com.example.dimart.popularmoviesapp.model.Movie;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -21,11 +23,11 @@ import java.util.List;
 /**
  * Created by Dmitrii Petukhov on 7/18/15.
  */
-public class MovieAdapter extends ArrayAdapter<Movie> {
+public class MoviesAdapter extends ArrayAdapter<Movie> {
 
-    private final String LOG_TAG = MovieAdapter.class.getSimpleName();
+    private final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
-    public MovieAdapter(Context context, List<Movie> movies) {
+    public MoviesAdapter(Context context, List<Movie> movies) {
         super(context, 0, movies);
     }
 
