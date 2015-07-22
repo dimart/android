@@ -1,11 +1,13 @@
 package com.example.dimart.popularmoviesapp.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.dimart.popularmoviesapp.R;
@@ -14,6 +16,7 @@ import com.example.dimart.popularmoviesapp.presenter.MoviesPresenter;
 import com.example.dimart.popularmoviesapp.presenter.adapter.MoviesAdapter;
 import com.example.dimart.popularmoviesapp.presenter.impl.MoviesPresenterImpl;
 import com.example.dimart.popularmoviesapp.view.MoviesView;
+import com.example.dimart.popularmoviesapp.view.activity.DetailActivity;
 
 import java.util.ArrayList;
 
@@ -42,6 +45,13 @@ public class MainActivityFragment extends Fragment implements MoviesView {
         mMoviesAdapter = new MoviesAdapter(getActivity(), new ArrayList<Movie>());
         GridView moviesGrid = (GridView) rootView.findViewById(R.id.movies_gridview);
         moviesGrid.setAdapter(mMoviesAdapter);
+
+        moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(getActivity(), DetailActivity.class));
+            }
+        });
 
         return rootView;
     }
