@@ -50,7 +50,8 @@ public class MainFragment extends Fragment implements MoviesView {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, mMoviesAdapter.getItem(position).getTitle());
+                        .putExtra(Intent.EXTRA_TEXT, mMoviesAdapter.getItem(position).getTitle())
+                        .putExtra("overview", mMoviesAdapter.getItem(position).getOverview());
                 startActivity(intent);
             }
         });

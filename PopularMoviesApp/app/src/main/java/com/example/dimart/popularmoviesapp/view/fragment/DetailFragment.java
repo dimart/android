@@ -18,6 +18,7 @@ import com.example.dimart.popularmoviesapp.R;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.nineoldandroids.view.ViewHelper;
 
 /**
  * Created by Dmitrii Petukhov on 7/22/15.
@@ -66,7 +67,9 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String title = intent.getStringExtra(Intent.EXTRA_TEXT);
+            String overview = intent.getStringExtra("overview");
             mTitleView.setText(title);
+            ((TextView) rootView.findViewById(R.id.detail_textview)).setText(overview);
         }
 
         return rootView;
@@ -75,6 +78,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll,
                                 boolean dragging) {
+        ViewHelper.setTranslationY(mFlexibleSpaceView, -scrollY);
     }
 
     @Override
