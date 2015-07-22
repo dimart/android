@@ -49,7 +49,9 @@ public class MainActivityFragment extends Fragment implements MoviesView {
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), DetailActivity.class));
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, mMoviesAdapter.getItem(position).getTitle());
+                startActivity(intent);
             }
         });
 

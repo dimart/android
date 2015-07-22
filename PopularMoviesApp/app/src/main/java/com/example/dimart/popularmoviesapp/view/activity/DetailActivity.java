@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.dimart.popularmoviesapp.R;
+import com.example.dimart.popularmoviesapp.view.fragment.DetailFragment;
 
 /**
  * Created by Dmitrii Petukhov on 7/22/15.
@@ -17,6 +18,11 @@ public class DetailActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.detail_container, new DetailFragment())
+                    .commit();
+        }
     }
 
     @Override
