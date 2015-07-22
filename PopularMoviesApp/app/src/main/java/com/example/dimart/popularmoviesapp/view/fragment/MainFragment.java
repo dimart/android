@@ -24,9 +24,9 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements MoviesView {
+public class MainFragment extends Fragment implements MoviesView {
 
-    private final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private final String LOG_TAG = MainFragment.class.getSimpleName();
 
     private MoviesAdapter mMoviesAdapter;
     private MoviesPresenter mMoviesPresenter;
