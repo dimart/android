@@ -5,4 +5,6 @@
     <dimen name="poster_minWidth">185dp</dimen>
     <dimen name="poster_minHeight">270dp</dimen>
     <dimen name="grid_spacing">4dp</dimen>
+    <dimen name="flexible_space_height">72dp</dimen>
+    <dimen name="toolbar_margin_start">72dp</dimen>
 </resources>

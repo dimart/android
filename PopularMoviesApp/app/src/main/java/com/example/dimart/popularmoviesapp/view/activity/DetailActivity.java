@@ -2,7 +2,7 @@ package com.example.dimart.popularmoviesapp.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,12 +12,13 @@ import com.example.dimart.popularmoviesapp.view.fragment.DetailFragment;
 /**
  * Created by Dmitrii Petukhov on 7/22/15.
  */
-public class DetailActivity extends ActionBarActivity {
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.detail_container, new DetailFragment())
