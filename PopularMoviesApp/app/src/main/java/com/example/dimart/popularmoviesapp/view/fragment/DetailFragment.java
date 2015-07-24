@@ -143,6 +143,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         }
 
         mGradientView.setBackgroundResource(R.drawable.gradient);
+
         return rootView;
     }
 
@@ -163,8 +164,10 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
         ViewHelper.setTranslationY(mPosterView, ScrollUtils.getFloat(-scrollY, -flexibleRange, 0));
         ViewHelper.setTranslationY(mGradientView, ScrollUtils.getFloat(-scrollY, -flexibleRange, 0));
 
-        // Change alpha of overlay
-        ViewHelper.setAlpha(mOverlayView, ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1));
+        // Change alpha of overlay and gradient
+        float alpha = (float) scrollY / flexibleRange;
+        ViewHelper.setAlpha(mOverlayView, ScrollUtils.getFloat(alpha, 0, 1));
+        ViewHelper.setAlpha(mGradientView, ScrollUtils.getFloat(1 - alpha, 0, 1));
 
         // Scale title text
         float scale = 1 + ScrollUtils.getFloat((flexibleRange - scrollY) / flexibleRange, 0, 0.3f);
@@ -175,7 +178,7 @@ public class DetailFragment extends Fragment implements ObservableScrollViewCall
 
         // Translate title
         int maxTitleTranslationY = (int) (mFlexibleSpaceImageHeight - mTitleView.getHeight() * scale);
-        float titleTranslationY = ScrollUtils.getFloat(maxTitleTranslationY-scrollY, 0, maxTitleTranslationY);
+        float titleTranslationY = ScrollUtils.getFloat(maxTitleTranslationY - scrollY, 0, maxTitleTranslationY);
         ViewHelper.setTranslationY(mTitleView, titleTranslationY);
     }
 
