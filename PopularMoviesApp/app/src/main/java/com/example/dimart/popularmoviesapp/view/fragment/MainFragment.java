@@ -1,6 +1,9 @@
 package com.example.dimart.popularmoviesapp.view.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -60,14 +63,28 @@ public class MainFragment extends Fragment implements MoviesView {
         return rootView;
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        String sortOrder = PreferenceManager
-                .getDefaultSharedPreferences(getActivity())
-                .getString(getString(R.string.pref_sort_order_key),
-                        getString(R.string.pref_sort_order_most_popular));
-        mMoviesPresenter.loadMovies(sortOrder);
+        if (isNetworkAvailable()) {
+            getActivity().findViewById(R.id.movies_gridview).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.no_connection).setVisibility(View.INVISIBLE);
+            String sortOrder = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity())
+                    .getString(getString(R.string.pref_sort_order_key),
+                            getString(R.string.pref_sort_order_most_popular));
+            mMoviesPresenter.loadMovies(sortOrder);
+        } else {
+            getActivity().findViewById(R.id.movies_gridview).setVisibility(View.INVISIBLE);
+            getActivity().findViewById(R.id.no_connection).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

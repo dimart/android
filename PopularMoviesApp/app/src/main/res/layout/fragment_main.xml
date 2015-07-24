@@ -1,12 +1,42 @@
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/movies_gridview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/grid_background"
-    android:horizontalSpacing="@dimen/grid_spacing"
-    android:numColumns="auto_fit"
-    android:scrollbars="none"
-    android:stretchMode="columnWidth"
-    android:verticalSpacing="@dimen/grid_spacing"
-    tools:context=".MainActivityFragment" />
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/movies_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:horizontalSpacing="@dimen/grid_spacing"
+        android:numColumns="auto_fit"
+        android:scrollbars="none"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/grid_spacing"
+        tools:context=".MainActivityFragment" />
+
+    <RelativeLayout
+        android:id="@+id/no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/background"
+        android:visibility="invisible">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_cloud_off"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="70dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/material_title"
+            android:text="@string/title_no_connection"/>
+    </RelativeLayout>
+</FrameLayout>
