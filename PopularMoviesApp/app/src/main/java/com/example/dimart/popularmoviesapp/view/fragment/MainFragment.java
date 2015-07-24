@@ -15,6 +15,7 @@ import com.example.dimart.popularmoviesapp.model.Movie;
 import com.example.dimart.popularmoviesapp.presenter.MoviesPresenter;
 import com.example.dimart.popularmoviesapp.presenter.adapter.MoviesAdapter;
 import com.example.dimart.popularmoviesapp.presenter.impl.MoviesPresenterImpl;
+import com.example.dimart.popularmoviesapp.util.Utils;
 import com.example.dimart.popularmoviesapp.view.MoviesView;
 import com.example.dimart.popularmoviesapp.view.activity.DetailActivity;
 
@@ -49,9 +50,9 @@ public class MainFragment extends Fragment implements MoviesView {
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie movie = mMoviesAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, mMoviesAdapter.getItem(position).getTitle())
-                        .putExtra("overview", mMoviesAdapter.getItem(position).getOverview());
+                        .putExtra(Utils.EXTRA_MOVIE, movie);
                 startActivity(intent);
             }
         });

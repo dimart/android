@@ -87,12 +87,10 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
-
             }
 
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-
             }
         };
     }

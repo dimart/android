@@ -37,11 +37,11 @@ public class MoviesPresenterImpl implements MoviesPresenter {
 
     @Override
     public void loadMovies(String sortOrder) {
-        Log.d(LOG_TAG, sortOrder);
         new FetchMoviesTask().execute(sortOrder);
     }
 
     private class FetchMoviesTask extends AsyncTask<String, Void, Movie[]> {
+
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         @Override
@@ -50,18 +50,25 @@ public class MoviesPresenterImpl implements MoviesPresenter {
                 return null;
             }
 
-            String sortOrder = params[0];
+            final String TMDB_BASE_URL = "http://api.themoviedb.org";
+            final String POSTER_SIZE = "w185";
+            final String BACKDROP_SIZE = "w500";
+            final String SORT_ORDER = params[0];
+
             RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint("http://api.themoviedb.org")
+                    .setEndpoint(TMDB_BASE_URL)
                     .build();
             TMDBService service = restAdapter.create(TMDBService.class);
 
-            List<TMDBResponse.Movie> response = service.movies(sortOrder, BuildConfig.THE_MOVIE_DB_KEY).results;
+            List<TMDBResponse.Movie> response =
+                    service.call(SORT_ORDER, BuildConfig.THE_MOVIE_DB_KEY).results;
             List<Movie> movies = new ArrayList<>();
             for (TMDBResponse.Movie x : response) {
                 movies.add(new Movie.Builder(x.title, x.overview)
-                        .posterUrl(getPosterUrlFor(x.poster_path))
+                        .posterUrl(getImgUrlFor(x.poster_path, POSTER_SIZE))
+                        .rating(x.vote_average)
                         .releaseDate(toDate(x.release_date))
+                        .backdropUrl(getImgUrlFor(x.backdrop_path, BACKDROP_SIZE))
                         .build());
             }
             return movies.toArray(new Movie[movies.size()]);
@@ -75,19 +82,17 @@ public class MoviesPresenterImpl implements MoviesPresenter {
         }
     }
 
-    private URL getPosterUrlFor(String posterId) {
-        if (posterId == null) {
+    private URL getImgUrlFor(String id, String imgSize) {
+        if (id == null) {
             return null;
         }
 
         final String IMG_TMDB_BASE_URL = "http://image.tmdb.org/t/p/";
-        final String IMG_SIZE = "w185";
-
         try {
             Uri posterUri = Uri.parse(IMG_TMDB_BASE_URL).buildUpon()
-                    .appendPath(IMG_SIZE)
+                    .appendPath(imgSize)
+                    .appendEncodedPath(id)
                     .appendQueryParameter("api_key", BuildConfig.THE_MOVIE_DB_KEY)
-                    .appendPath(posterId.substring(1))
                     .build();
             return new URL(posterUri.toString());
         } catch (MalformedURLException e) {
@@ -107,18 +112,20 @@ public class MoviesPresenterImpl implements MoviesPresenter {
 
     private interface TMDBService {
         @GET("/3/movie/{sort_order}")
-        TMDBResponse movies(@Path("sort_order") String sortOrder, @Query("api_key") String apiKey);
+        TMDBResponse call(@Path("sort_order") String sortOrder, @Query("api_key") String apiKey);
     }
 
     private class TMDBResponse {
         String page;
-        List<Movie> results =  new ArrayList<>();
+        List<Movie> results = new ArrayList<>();
 
         class Movie {
             String title;
             String poster_path;
             String overview;
             String release_date;
+            String backdrop_path;
+            float vote_average;
         }
     }
 }
