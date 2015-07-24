@@ -5,14 +5,9 @@
     <color name="light_text">#FFFFFF</color>
     <color name="dark_text">#000000</color>
 
-    <color name="transparent_status_bar">#50000000</color>
+    <color name="grid_background">#303030</color>
 
-    <color name="grad_start_color">#50000000</color>
-    <color name="grad_center_color">#00FFFFFF</color>
-    <color name="grad_end_color">#00FFFFFF</color>
-
-    <color name="primary">#009688</color>
-    <color name="primaryDark">#00796b</color>
-    <color name="accent">#eeff41</color>
-    <color name="accentLight">#F4FF81</color>
+    <color name="gradient_start_color">#50000000</color>
+    <color name="gradient_center_color">#00FFFFFF</color>
+    <color name="gradient_end_color">#50000000</color>
 </resources>
