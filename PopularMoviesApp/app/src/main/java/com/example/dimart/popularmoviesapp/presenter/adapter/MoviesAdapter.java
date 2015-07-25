@@ -41,9 +41,9 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
 
             // Configure view holder.
             holder = new MovieHolder();
-            holder.posterView = (ImageView) convertView.findViewById(R.id.grid_item_poster);
-            holder.title = (TextView) convertView.findViewById(R.id.grid_item_title);
-            holder.bar = (LinearLayout) convertView.findViewById(R.id.grid_item_bar);
+            holder.mPosterView = (ImageView) convertView.findViewById(R.id.grid_item_poster);
+            holder.mTitle = (TextView) convertView.findViewById(R.id.grid_item_title);
+            holder.mBar = (LinearLayout) convertView.findViewById(R.id.grid_item_bar);
             convertView.setTag(holder);
         } else {
             holder = (MovieHolder) convertView.getTag();
@@ -51,21 +51,21 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
 
         Movie movie = getItem(position);
 
-        holder.posterView.setImageDrawable(null);
+        holder.mPosterView.setImageDrawable(null);
 
         Picasso.with(getContext())
                 .load(movie.getPosterUrl())
                 .into(holder.target);
 
-        holder.title.setText(movie.getTitle());
+        holder.mTitle.setText(movie.getTitle());
 
         return convertView;
     }
 
     static class MovieHolder {
-        ImageView posterView;
-        TextView title;
-        LinearLayout bar;
+        private ImageView mPosterView;
+        private TextView mTitle;
+        private LinearLayout mBar;
 
         Palette.PaletteAsyncListener listener = new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette palette) {
@@ -74,14 +74,14 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
                 int green = (color >> 8) & 0xFF;
                 int blue = color & 0xFF;
                 int alpha = 200;
-                bar.setBackgroundColor(Color.argb(alpha, red, green, blue));
+                mBar.setBackgroundColor(Color.argb(alpha, red, green, blue));
             }
         };
 
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                posterView.setImageBitmap(bitmap);
+                mPosterView.setImageBitmap(bitmap);
                 Palette.generateAsync(bitmap, listener);
             }
 

@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +33,10 @@ public class MainFragment extends Fragment implements MoviesView {
 
     private final String LOG_TAG = MainFragment.class.getSimpleName();
 
+    private View mRootView;
     private MoviesAdapter mMoviesAdapter;
     private MoviesPresenter mMoviesPresenter;
+    private String mSortOrder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,10 +47,20 @@ public class MainFragment extends Fragment implements MoviesView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mSortOrder = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_sort_order_key),
+                        getString(R.string.pref_sort_order_most_popular));
 
-        mMoviesAdapter = new MoviesAdapter(getActivity(), new ArrayList<Movie>());
-        GridView moviesGrid = (GridView) rootView.findViewById(R.id.movies_gridview);
+        ArrayList<Movie> movies = new ArrayList<>();
+        if (savedInstanceState != null) {
+            movies = savedInstanceState.getParcelableArrayList(Utils.MOVIES);
+            mSortOrder = savedInstanceState.getString(Utils.SORT_ORDER);
+        }
+
+        mMoviesAdapter = new MoviesAdapter(getActivity(), movies);
+        GridView moviesGrid = (GridView) mRootView.findViewById(R.id.movies_gridview);
         moviesGrid.setAdapter(mMoviesAdapter);
 
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -60,7 +73,22 @@ public class MainFragment extends Fragment implements MoviesView {
             }
         });
 
-        return rootView;
+        return mRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        boolean orderChanged = !mSortOrder.equals(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_sort_order_key),
+                        getString(R.string.pref_sort_order_most_popular)));
+
+        // If the bundle's empty or user just changes sort order,
+        // we'll try to update movies immediately.
+        if (orderChanged || mMoviesAdapter.getCount() == 0) {
+            tryUpdateMovies();
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -71,20 +99,16 @@ public class MainFragment extends Fragment implements MoviesView {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (isNetworkAvailable()) {
-            getActivity().findViewById(R.id.movies_gridview).setVisibility(View.VISIBLE);
-            getActivity().findViewById(R.id.no_connection).setVisibility(View.INVISIBLE);
-            String sortOrder = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity())
-                    .getString(getString(R.string.pref_sort_order_key),
-                            getString(R.string.pref_sort_order_most_popular));
-            mMoviesPresenter.loadMovies(sortOrder);
-        } else {
-            getActivity().findViewById(R.id.movies_gridview).setVisibility(View.INVISIBLE);
-            getActivity().findViewById(R.id.no_connection).setVisibility(View.VISIBLE);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        ArrayList<Movie> movies = new ArrayList<>();
+        int moviesCount = mMoviesAdapter.getCount();
+        for (int i = 0; i < moviesCount; i++) {
+            movies.add(mMoviesAdapter.getItem(i));
         }
+        outState.putParcelableArrayList(Utils.MOVIES, movies);
+        outState.putString(Utils.SORT_ORDER, mSortOrder);
     }
 
     @Override
@@ -93,5 +117,25 @@ public class MainFragment extends Fragment implements MoviesView {
             mMoviesAdapter.clear();
             mMoviesAdapter.addAll(movies);
         }
+    }
+
+    public void tryUpdateMovies() {
+        if (!isNetworkAvailable()) {
+            showNoConnectionWarning();
+            return;
+        }
+        mSortOrder = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_sort_order_key),
+                        getString(R.string.pref_sort_order_most_popular));
+        mMoviesPresenter.loadMovies(mSortOrder);
+    }
+
+    public void showNoConnectionWarning() {
+        int color = getResources().getColor(R.color.no_connection_warning);
+        String msg = getString(R.string.no_connection);
+        Snackbar snackbar = Snackbar.make(mRootView, msg, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundColor(color);
+        snackbar.show();
     }
 }
