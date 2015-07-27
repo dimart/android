@@ -31,9 +31,9 @@ public class MovieContract {
 
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_OVERVIEW = "overview";
-        public static final String COLUMN_POSTER_URL = "poster_url";
-        public static final String COLUMN_TRAILER_URL = "trailer_url";
-        public static final String COLUMN_BACKDROP_URL = "backdrop_url";
+        public static final String COLUMN_POSTER_ID = "poster_id";
+        public static final String COLUMN_TRAILER_ID = "trailer_id";
+        public static final String COLUMN_BACKDROP_ID = "backdrop_id";
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_RATING = "rating";
         public static final String COLUMN_VOTE_COUNT = "vote_count";
