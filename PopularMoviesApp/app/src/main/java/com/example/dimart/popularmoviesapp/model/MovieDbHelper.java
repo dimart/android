@@ -43,7 +43,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 " (" +
                 GenreEntry._ID + " INTEGER PRIMARY KEY," +
 
-                GenreEntry.COLUMN_GENRE_NAME + " TEXT NOT NULL " +
+                GenreEntry.COLUMN_GENRE_NAME + " TEXT UNIQUE NOT NULL " +
                 " )";
 
         final String SQL_CREATE_MOVIE_GENRE_TABLE = "CREATE TABLE " + MovieGenreEntry.TABLE_NAME +
@@ -53,11 +53,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieGenreEntry.COLUMN_MOVIE_KEY + " INTEGER NOT NULL, " +
                 MovieGenreEntry.COLUMN_GENRE_KEY + " INTEGER NOT NULL, " +
 
-                // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + MovieGenreEntry.COLUMN_MOVIE_KEY + ") REFERENCES " +
                 MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + "), " +
 
-                // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + MovieGenreEntry.COLUMN_GENRE_KEY + ") REFERENCES " +
                 GenreEntry.TABLE_NAME + " (" + GenreEntry._ID + ") " +
                 " )";
