@@ -1,18 +1,26 @@
 package com.example.dimart.popularmoviesapp.model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Dmitrii Petukhov on 7/27/15.
  */
 public class TestDb extends AndroidTestCase {
+
+    void deleteTheDatabase() {
+        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
+    }
+
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
+        deleteTheDatabase();
     }
 
     public void testCreateDb() throws Throwable {
@@ -22,9 +30,7 @@ public class TestDb extends AndroidTestCase {
         tableNameHashSet.add(MovieContract.GenreEntry.TABLE_NAME);
         tableNameHashSet.add(MovieContract.MovieGenreEntry.TABLE_NAME);
 
-        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
-        SQLiteDatabase db = new MovieDbHelper(
-                this.mContext).getWritableDatabase();
+        SQLiteDatabase db = new MovieDbHelper(mContext).getReadableDatabase();
         assertEquals(true, db.isOpen());
 
         // have we created the tables we want?
@@ -35,7 +41,7 @@ public class TestDb extends AndroidTestCase {
         // verify that the tables have been created
         do {
             tableNameHashSet.remove(c.getString(0));
-        } while( c.moveToNext() );
+        } while (c.moveToNext());
         assertTrue("Error: Database was created without the movie entry, genre entry and movie_genre entry tables",
                 tableNameHashSet.isEmpty());
 
@@ -101,6 +107,113 @@ public class TestDb extends AndroidTestCase {
         } while(c.moveToNext());
         assertTrue("Error: The movie_genre database doesn't contain all of the required entry columns",
                 movieGenreColumnHashSet.isEmpty());
+
+        c.close();
+        db.close();
+    }
+
+    private void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
+        Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
+        for (Map.Entry<String, Object> entry : valueSet) {
+            String columnName = entry.getKey();
+            int idx = valueCursor.getColumnIndex(columnName);
+            assertTrue("Column '" + columnName + "' not found. " + error, idx != -1);
+            String expectedValue = entry.getValue().toString();
+            assertEquals("Value '" + entry.getValue().toString() +
+                    "' did not match the expected value '" +
+                    expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
+        }
+    }
+
+    private ContentValues createMovieValues() {
+        ContentValues movieValues = new ContentValues();
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, "12 Angry Men");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "Overview");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_ID, "qcL1YfkCxfhsdO6sDDJ0P");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_ID, "qcL1YfkCxfhsdO6");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_TRAILER_ID, "qcL1YfkCxfhsdO6sDD");
+        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, System.currentTimeMillis());
+        movieValues.put(MovieContract.MovieEntry.COLUMN_RATING, 8.1);
+        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, 42);
+        return movieValues;
+    }
+
+    private ContentValues createGenreValues() {
+        ContentValues genreValues = new ContentValues();
+        genreValues.put(MovieContract.GenreEntry.COLUMN_GENRE_NAME, "Action");
+        return  genreValues;
+    }
+
+    public void testMovieTable() {
+        SQLiteDatabase db = new MovieDbHelper(mContext).getWritableDatabase();
+        assertEquals(true, db.isOpen());
+
+        ContentValues movieValues = createMovieValues();
+
+        long id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, movieValues);
+        assertTrue("Error: Unable to insert values in the movie table", id != -1);
+
+        Cursor c = db.query(MovieContract.MovieEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertTrue("Error: Unable to query the movie database for table information.",
+                c.moveToFirst());
+
+        validateCurrentRecord("Error: Movie Query Validation Failed", c, movieValues);
+
+        assertFalse("Error: More than one record returned from movie query", c.moveToNext());
+
+        c.close();
+        db.close();
+    }
+
+    public void testGenreTable() {
+        SQLiteDatabase db = new MovieDbHelper(mContext).getWritableDatabase();
+        assertEquals(true, db.isOpen());
+
+        ContentValues genreValues = createGenreValues();
+
+        long id = db.insert(MovieContract.GenreEntry.TABLE_NAME, null, genreValues);
+        assertTrue("Error: Unable to insert values in the genre table", id != -1);
+
+        Cursor c = db.query(MovieContract.GenreEntry.TABLE_NAME,
+                null, null, null, null, null, null);
+        assertTrue("Error: Unable to query the genre database for table information.",
+                c.moveToFirst());
+
+        validateCurrentRecord("Error: Genre Query Validation Failed", c, genreValues);
+
+        assertFalse("Error: More than one record returned from genre query", c.moveToNext());
+
+        c.close();
+        db.close();
+    }
+
+    public void testMovieGenreTable() {
+        SQLiteDatabase db = new MovieDbHelper(mContext).getWritableDatabase();
+        assertEquals(true, db.isOpen());
+
+        ContentValues movieValues = createMovieValues();
+        ContentValues genreValues = createGenreValues();
+
+        long movieId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, movieValues);
+        assertTrue("Error: Unable to insert values in the movie table", movieId != -1);
+        long genreId = db.insert(MovieContract.GenreEntry.TABLE_NAME, null, genreValues);
+        assertTrue("Error: Unable to insert values in the genre table", genreId != -1);
+
+        ContentValues movieGenreValues = new ContentValues();
+        movieGenreValues.put(MovieContract.MovieGenreEntry.COLUMN_MOVIE_KEY, movieId);
+        movieGenreValues.put(MovieContract.MovieGenreEntry.COLUMN_GENRE_KEY, genreId);
+
+        long movieGenreId = db.insert(MovieContract.MovieGenreEntry.TABLE_NAME, null, movieGenreValues);
+        assertTrue("Error: Unable to insert values in the movie_genre table", movieGenreId != -1);
+
+        Cursor c = db.query(MovieContract.MovieGenreEntry.TABLE_NAME,
+                null, null, null, null, null, null);
+        assertTrue("Error: Unable to query the movie_genre database for table information.",
+                c.moveToFirst());
+
+        validateCurrentRecord("Error: MovieGenre Query Validation Failed", c, movieGenreValues);
+
+        assertFalse("Error: More than one record returned from movie_genre query", c.moveToNext());
 
         c.close();
         db.close();
