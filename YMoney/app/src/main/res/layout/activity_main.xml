@@ -12,10 +12,9 @@
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <fragment
+    <FrameLayout
         android:id="@+id/main_fragment"
-        android:name="com.example.dimart.ymoney.MainFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/fragment_main" />
+        tools:context="com.example.dimart.ymoney.MainActivity"/>
 </LinearLayout>
