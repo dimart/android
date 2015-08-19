@@ -3,6 +3,7 @@ package com.example.dimart.ymoney;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,17 +19,20 @@ import retrofit.http.GET;
  */
 public class MainFragment extends Fragment {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateCategoriesList();
+            }
+        });
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateCategoriesList();
     }
 
     private void updateCategoriesList() {
@@ -77,8 +81,12 @@ public class MainFragment extends Fragment {
             for (Category c : response) {
                 Log.d(LOG_TAG, "" + c);
             }
-
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 }
