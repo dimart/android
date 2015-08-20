@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="warning_empty_category">#F44336</color>
+
+    <color name="swipe_to_refresh_circle">#FF9900</color>
+</resources>
