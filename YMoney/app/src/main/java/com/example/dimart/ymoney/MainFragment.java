@@ -24,6 +24,9 @@ import java.util.List;
 /**
  * Created by Dmitrii Petukhov on 8/19/15.
  * Displays categories as a simple list.
+ *
+ * TODO: Use CursorAdapter and CursorLoader!
+ *
  */
 public class MainFragment extends Fragment {
 
